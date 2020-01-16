@@ -19,7 +19,7 @@
 #' and that one can contain paths to actual data, presumably on each 
 #' collaborator's local computer.
 inputdata <- c(
-  dat01 = 'data/ENRICHed List - NASH_1_3.1578502159.0543473 - Clinithink Rapid POC 2 - NASH.xlsx'
+  dat01 = 'simulation of ENRICHed List - NASH_1_3.1578502159.0543473.xlsx'
 );
 #### footer ####
 c()
