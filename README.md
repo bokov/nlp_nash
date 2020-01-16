@@ -4,7 +4,7 @@
 
 ## Installation:
 
-Clone this repository, open the [example_analysis.R] file in RStudio, and hit CTRL-SHIFT-K on your keyboard (compile report). It will compile a report on simulated test data
+Clone this repository, open the [example_analysis.R](example_analysis.R) file in RStudio, and hit CTRL-SHIFT-K on your keyboard (compile report). It will compile a report on simulated test data
 that has the same format and similar statistical properties to our actual data. If you are part of our team and wish to run these reports on the real data, please contact 
 Pankil or Alex
 
