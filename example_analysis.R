@@ -169,7 +169,7 @@ if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
   .repomessage <- paste0(.repo$name,' branch of the ');
   .sha <- substr(branch_target(.repo),1,7);
   .shamessage <- paste0(' The unique SHA hash for the revision you are currently reading is '
-                        ,.sha);
+                        ,.sha,'.');
   .badge <- sprintf('\n\n[![Travis-CI Build Status](%1$s.svg?branch=%2$s)](%1$s)'
                     ,.travisci,.repo$name)
 } else {
@@ -177,11 +177,11 @@ if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
 }
 #' This report is directly generated from R scripts stored in the
 #' `r .repomessage` [bokov/nlp_nash](`r .repourl`) repository on GitHub.
-#' `r .shamessage`. If you check out or download it from GitHub and compile the
+#' `r .shamessage` If you check out or download it from GitHub and compile the
 #' `r paste0('\x60',.currentscript,'\x60')` file, you will get the above plots
 #' and tables _but_ based on _simulated data_ in the same format since the raw
-#' data contains PHI. If you obtain from the first two authors a copy of
-#' `r paste0('\x60',basename(inputdata),'\x60')`
+#' data contains PHI and we are not permitted to distribute it. If you obtain
+#' from the authors a copy of **`r paste0('\x60',basename(inputdata),'\x60')`**
 #' (MD5 sum: `r tools::md5sum(inputdata[1])`) _then_ you should be able to
 #' reproduce the exact results you see here.
 #'
