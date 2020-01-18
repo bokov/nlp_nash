@@ -166,11 +166,11 @@ if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
    length(diff(.repo$repo)$files) == 0 &&
    sum(ahead_behind(.repo,branch_get_upstream(.repo))) == 0){
   .repourl <- paste0(.repourl,'tree/',.repo$name);
-  .repomessage <- paste0(.repo$name,' branch of the ');
+  .repomessage <- paste0('**',.repo$name,'** branch of the ');
   .sha <- substr(branch_target(.repo),1,7);
   .shamessage <- paste0(' The unique SHA hash for the revision you are currently reading is '
                         ,.sha,'.');
-  .badge <- sprintf('\n\n[![Travis-CI Build Status](%1$s.svg?branch=%2$s)](%1$s)'
+  .badge <- sprintf('\n\nCI testing status: [![Travis-CI Build Status](%1$s.svg?branch=%2$s)](%1$s)'
                     ,.travisci,.repo$name)
 } else {
   .repomessage <- .shamessage <- .badge <- c();
@@ -181,12 +181,17 @@ if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
 #' `r paste0('\x60',.currentscript,'\x60')` file, you will get the above plots
 #' and tables _but_ based on _simulated data_ in the same format since the raw
 #' data contains PHI and we are not permitted to distribute it. If you obtain
-#' from the authors a copy of **`r paste0('\x60',basename(inputdata),'\x60')`**
-#' (MD5 sum: `r tools::md5sum(inputdata[1])`) _then_ you should be able to
-#' reproduce the exact results you see here.
+#' from the authors a copy of...
+#'
+#' **`r paste0('\x60',basename(inputdata),'\x60')`**
+#'
+#'
+#' (MD5 sum: `r tools::md5sum(inputdata[1])`)
+#'
+#' ..._then_ you will be able to reproduce the exact results you see here.
 #'
 #' You can leave feedback or questions
-#' [at this link](https://github.com/bokov/nlp_nash/issues)
+#' [at this link](https://github.com/bokov/nlp_nash/issues).
 #' `r .badge`
 #'
 #+ save,echo=FALSE,results='hide'
