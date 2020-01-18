@@ -161,12 +161,33 @@ mutate(dat01,a_ct_nash=(factor(a_ct_nash,levels=c(0,.5,1.5)
 #+ git, echo=FALSE, message=FALSE, warning=FALSE, results='hide'
 .repourl <- 'https://github.com/bokov/nlp_nash/';
 .repo <- try(repository_head(repository(proj_get())));
-if(!is(.repo,'try-error') && !is_detached(.repo$repo)){
+.travisci <- 'https://travis-ci.org/bokov/nlp_nash';
+if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
+   length(diff(.repo$repo)$files) &&
+   sum(ahead_behind(.repo,branch_get_upstream(.repo))) == 0){
   .repourl <- paste0(.repourl,'tree/',.repo$name);
+  .repomessage <- paste0(.repo$name,' branch of the ');
   .sha <- substr(branch_target(.repo),1,7);
+  .shamessage <- paste0(' The unique SHA hash for the revision you are currently reading is '
+                        ,.sha);
+  .badge <- sprintf('\n\n[![Travis-CI Build Status](%1$s.svg?branch=%2$s)](%1$s)'
+                    ,.travisci,.repo$name)
+} else {
+  .repomessage <- .shamessage <- .badge <- c();
 }
 #' This report is directly generated from R scripts stored in the
-#' [bokov/nlp_nash](`r paste0(.repourl,'tree/',.repo$name)`) repository on GitHub. This
+#' `r .repomessage` [bokov/nlp_nash](`r .repourl`) repository on GitHub.
+#' `r .shamessage`. If you check out or download it from GitHub and compile the
+#' `r paste0('\x60',.currentscript,'\x60')` file, you will get the above plots
+#' and tables _but_ based on _simulated data_ in the same format since the raw
+#' data contains PHI. If you obtain from the first two authors a copy of
+#' `r paste0('\x60',basename(inputdata),'\x60')`
+#' (MD5 sum: `r tools::md5sum(inputdata[1])`) _then_ you should be able to
+#' reproduce the exact results you see here.
+#'
+#' You can leave feedback or questions
+#' [at this link](https://github.com/bokov/nlp_nash/issues)
+#' `r .badge`
 #'
 #+ save,echo=FALSE,results='hide'
 save(file=paste0(.currentscript,'.rdata'),list=setdiff(ls(),.origfiles));
