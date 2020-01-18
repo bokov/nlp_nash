@@ -163,7 +163,7 @@ mutate(dat01,a_ct_nash=(factor(a_ct_nash,levels=c(0,.5,1.5)
 .repo <- try(repository_head(repository(proj_get())));
 .travisci <- 'https://travis-ci.org/bokov/nlp_nash';
 if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
-   length(diff(.repo$repo)$files) &&
+   length(diff(.repo$repo)$files) == 0 &&
    sum(ahead_behind(.repo,branch_get_upstream(.repo))) == 0){
   .repourl <- paste0(.repourl,'tree/',.repo$name);
   .repomessage <- paste0(.repo$name,' branch of the ');
