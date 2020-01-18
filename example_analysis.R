@@ -11,6 +11,7 @@
 #'   html_document:
 #'     toc: true
 #'     toc_float: true
+#'     keep_md: yes
 #' ---
 #'
 #+ set_config, echo=FALSE, message=FALSE, warning=FALSE,results='hide'
