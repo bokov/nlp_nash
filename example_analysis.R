@@ -9,8 +9,8 @@
 #' css: "production.css"
 #' output:
 #'   html_document:
-#'     toc: true
-#'     toc_float: true
+#'     toc: false
+#'     toc_float: false
 #'     keep_md: yes
 #' ---
 #'
