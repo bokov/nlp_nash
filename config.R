@@ -28,6 +28,8 @@ inputdata <- c(
 #' will propagate throughout the project
 options(datatable.integer64='character');
 
+samples_use <- c(dat01='all');
+
 #### footer ####
 c()
 
