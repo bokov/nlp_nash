@@ -28,8 +28,10 @@ vignettes/*.pdf
 *.Rout
 # Local configuration
 local
+local.config.R
 # Other temp files
 .~lock.*#
+.out
 # We don't commit data unless we really mean it.
 *.csv
 data_characterization.R.rdata
@@ -37,4 +39,7 @@ data_characterization.R.rdata
 *.spin.R
 *.spin.Rmd
 *.R.rdata
+*.R.unsampled.rdata
 *.rda
+*.xlsx
+

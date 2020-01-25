@@ -1,11 +1,6 @@
 #' ---
 #' title: "Evaluating Clinithink Results"
-#' author:
-#' - "Pankil Shah"
-#' - "Alex Bokov"
-#' - "Dimpy Shah"
-#' - "Ronald Rodriguez"
-#' - "Meredith Zozus"
+#' author: "Pankil Shah, Alex Bokov, Dimpy Shah, Ronald Rodriguez, Meredith Zozus"
 #' css: "production.css"
 #' output:
 #'   html_document:
@@ -16,16 +11,22 @@
 #'
 #+ set_config, echo=FALSE, message=FALSE, warning=FALSE,results='hide'
 .projpackages <- c('GGally','pander','dplyr','ggplot2','psych','git2r');
-.deps <- c( 'dictionary.R' );
+.deps <- c( 'merge.R' );
 #+ load_deps, echo=FALSE, message=FALSE, warning=FALSE,results='hide'
 # do not edit the next two lines
 .junk<-capture.output(source('./scripts/global.R',chdir=TRUE,echo=FALSE));
 .currentscript <- current_scriptname('example_analysis.R');
+
+panderOptions('table.alignment.default','right');
+panderOptions('table.alignment.rownames','right');
+panderOptions('table.split.table',Inf);
+panderOptions('p.wrap','`');
+panderOptions('p.copula',', and ');
 #'
 #' # Data
 #'
-#' This dataset is a spreadsheet with `r ncol(dat01)` columns and
-#' `r nrow(dat01)` observations. Most of the columns represent various concepts
+#' This dataset is a spreadsheet with `r ncol(dat04)` columns and
+#' `r nrow(dat04)` observations. Most of the columns represent various concepts
 #' extracted from the notes by the Clinithink system. They are numeric and range
 #' from 0 to 1, representing the weight each variable contributes to the overall
 #' score (`patientscore`).
@@ -34,13 +35,15 @@
 #'
 #' The following variables are not used in analysis and are filtered out:
 #+ c_omit, echo=FALSE
-attr(dat01,'tblinfo')$c_omit <- attr(dat01,'tblinfo')$column %in%
+attr(dat04,'tblinfo')$c_omit <- attr(dat04,'tblinfo')$column %in%
   c('mrn','surname','forename','patientreporturl'
     # the above are non-analyzable text fields
     ,'gender' # in this dataset it's always 'U'
+    ,'birth_date', 'orig_order'
     ,'other_chron_liver_disease_prm_exc' # has all 0 values except for one
     );
-gsub('\\b_|_\\b','`',pander(v(c_omit,dat01)));
+pander(v(c_omit,dat04));
+
 #'
 #' The reason `other_chron_liver_disease_prm_exc` is among them is that in this
 #' dataset it always has a value of 0 except for one case.
@@ -50,26 +53,26 @@ gsub('\\b_|_\\b','`',pander(v(c_omit,dat01)));
 #' other eligibility criteria. Therefore we created another score, named
 #' `a_ct_nash` that is the sum of the following variables:
 #+ c_nashonly, echo=FALSE
-attr(dat01,'tblinfo')$c_nashonly <- attr(dat01,'tblinfo')$column %in%
+attr(dat04,'tblinfo')$c_nashonly <- attr(dat04,'tblinfo')$column %in%
   c('nash_prm_inc','signs_of_nash_prm_inc','hepatic_fibrosis_nash_risk_prm_inc');
-gsub('\\b_|_\\b','`',pander(v(c_nashonly,dat01)));
-dat01$a_ct_nash <- dat01[,v(c_nashonly,dat01)] %>% rowSums;
+pander(paste(v(c_nashonly,dat04)));
+dat04$a_ct_nash <- dat04[,v(c_nashonly,dat04)] %>% rowSums;
 #'
 #' ***
 #'
 #' The following variables were used by CliniThink as exclusion criteria:
 #+ c_exclude, echo=FALSE
-attr(dat01,'tblinfo')$c_exclude <- attr(dat01,'tblinfo')$column %in%
+attr(dat04,'tblinfo')$c_exclude <- attr(dat04,'tblinfo')$column %in%
   grep('_exc$',map0$varname,val=TRUE);
-gsub('\\b_|_\\b','`',pander(v(c_exclude,dat01)));
+pander(v(c_exclude,dat04));
 #'
 #' ***
 #'
 #' The following variables were used by CliniThink as inclusion criteria:
 #+ c_include, echo=FALSE
-attr(dat01,'tblinfo')$c_include <- attr(dat01,'tblinfo')$column %in%
+attr(dat04,'tblinfo')$c_include <- attr(dat04,'tblinfo')$column %in%
   grep('_inc$',map0$varname,val=TRUE);
-gsub('\\b_|_\\b','`',pander(v(c_include,dat01)));
+pander(v(c_include,dat04));
 #'
 #' ***
 #'
@@ -84,7 +87,7 @@ gsub('\\b_|_\\b','`',pander(v(c_include,dat01)));
 #' inverse correlations. The rows and columns have been sorted so as to make it
 #' easier to see clusters of correlated variables.
 #'
-#' As expected `r gsub('\\b_|_\\b','\x60',pander(v(c_nashonly,dat01)))`
+#' As expected `r pander(v(c_nashonly,dat04))`
 #' correlate with `a_ct_nash` (presence/absence of NASH) since the latter is
 #' their sum. Interestingly, all
 #' the large correlations for `patientscore` are negative ones, mostly for
@@ -92,16 +95,17 @@ gsub('\\b_|_\\b','`',pander(v(c_include,dat01)));
 #'
 #+ cor01, echo=FALSE
 # Calculate a correlation matrix
-cor01 <- dat01 %>% select(-c(v(c_omit,.))) %>% cor %>%
+cor01 <- dat04 %>% select(-c(v(c_omit,.),'sex_cd','language_cd','race_cd')) %>%
+  cor(use='pairwise') %>%
   {.ord<-hclust(as.dist((1-abs(.))/2))$order;(.)[.ord,.ord]};
 # Move the two score variables to the last two rows and columns for easier
 # interpretation
 cor01 <- c('a_ct_nash','patientscore') %>% c(Filter(function(xx) !xx %in% .
                                                     ,colnames(cor01)),.) %>%
   `[`(cor01,.,.);
-select(dat01,-c(v(c_omit,dat01))) %>% ggcorr(cor_matrix=cor01,label=TRUE
-                                             ,label_size=2,nudge_x=-8
-                                             ,layout.exp=8,nbreaks = 5, size=3);
+select(dat04,colnames(cor01)) %>% mutate_all(as.numeric) %>%
+  ggcorr(cor_matrix=cor01,label=TRUE,label_size=2,nudge_x=-8,layout.exp=8
+         ,nbreaks = 5, size=3);
 #'
 #' ***
 #'
@@ -111,7 +115,7 @@ select(dat01,-c(v(c_omit,dat01))) %>% ggcorr(cor_matrix=cor01,label=TRUE
 #' `a_ct_nash` and `patientscore`. In the table below we can see in more
 #' detail considerable discrepancy between them (the italicized values).
 #+ nash_v_score, echo=FALSE
-with(dat01,table(`NASH Present:`=factor(a_ct_nash,levels=c(0,.5,1.5)
+with(dat04,table(`NASH Present:`=factor(a_ct_nash,levels=c(0,.5,1.5)
                                         ,labels=c('No','Maybe','Yes'))
                  ,`Clinithink Score:`=cut(patientscore,c(-Inf,0,Inf)
                                           ,labels = c('<=0','>0')))) %>%
@@ -127,9 +131,9 @@ with(dat01,table(`NASH Present:`=factor(a_ct_nash,levels=c(0,.5,1.5)
 #' with.
 #'
 #+ kappa, echo=FALSE,warning=FALSE,message=FALSE
-mutate(dat01,a_ct_nash=(factor(a_ct_nash,levels=c(0,.5,1.5)
+mutate(dat04,a_ct_nash=(factor(a_ct_nash,levels=c(0,.5,1.5)
                                ,labels=c('No','Maybe','Yes')))
-       ,patientscore=(cut(patientscore,quantile(patientscore,(0:3)/3)
+       ,patientscore=(cut(patientscore,quantile(patientscore,(0:3)/3,na.rm=T)
                           ,include.lowest = TRUE
                           ,labels=c('No','Maybe','Yes')))) %>%
   select(c('a_ct_nash','patientscore')) %>%
@@ -176,20 +180,28 @@ if(!is(.repo,'try-error') && !is_detached(.repo$repo) && is_branch(.repo) &&
 } else {
   .repomessage <- .shamessage <- .badge <- c();
 }
+
+
+.thisisrealdata <- length(setdiff(normalizePath(dirname(inputdata))
+                                  ,normalizePath('data'))) > 0;
+if(.thisisrealdata){
+  .datamessage01 <- ' If you obtain from the authors copies of ...';
+  .datamessage02 <- '..._then_ you will be able to reproduce the exact results you see here.';
+} else .datamessage01 <- .datamessage02 <- c();
 #' This report is directly generated from R scripts stored in the
 #' `r .repomessage` [bokov/nlp_nash](`r .repourl`) repository on GitHub.
 #' `r .shamessage` If you check out or download it from GitHub and compile the
 #' `r paste0('\x60',.currentscript,'\x60')` file, you will get the above plots
 #' and tables _but_ based on _simulated data_ in the same format since the raw
-#' data contains PHI and we are not permitted to distribute it. If you obtain
-#' from the authors a copy of...
+#' data contains PHI and we are not permitted to distribute it.
+#' `r .datamessage01`
+#+ datafiles, echo=FALSE
+if(.thisisrealdata){
+  setNames(tools::md5sum(inputdata),basename(inputdata)) %>% cbind %>%
+    data.frame %>% setNames('MD5 sum') %>% pander
+}
 #'
-#' **`r paste0('\x60',basename(inputdata),'\x60')`**
-#'
-#'
-#' (MD5 sum: `r tools::md5sum(inputdata[1])`)
-#'
-#' ..._then_ you will be able to reproduce the exact results you see here.
+#' `r .datamessage02`
 #'
 #' You can leave feedback or questions
 #' [at this link](https://github.com/bokov/nlp_nash/issues).
