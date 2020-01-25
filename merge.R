@@ -92,6 +92,7 @@ dat04[,c('surname','forename')] <- NA;
 #' Remove the identifying/extraneous variables
 v_toremove <- c('patient_num','sex_cd.xwalk','patient_ide','pat_name');
 dat04 <- select(dat04,-v_toremove);
+attr(dat04,'tblinfo') <- tblinfo(dat04);
 .names.dat04.out <- setdiff(.names.dat04.out,v_toremove);
 #' Save out
 export(setNames(dat04,.names.dat04.out)
