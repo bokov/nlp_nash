@@ -5,6 +5,7 @@
 #' ---
 #'
 
+
 #### inputdata ####
 #'
 #' The inputdata variable determines which data files will get read into your
@@ -19,9 +20,10 @@
 #' and that one can contain paths to actual data, presumably on each
 #' collaborator's local computer.
 inputdata <- c(
-  dat01 = 'simulation of ENRICHed List - NASH_1_3.1578502159.0543473.xlsx'
+  dat01 = 'data/simulation of ENRICHed List - NASH_1_3.1578502159.0543473.xlsx'
+ ,xwalk = 'data/simulation of PHI_clinithink_crosswalk.csv'
+ ,dat02 = 'data/simulation of DF_HSC20150212HR_clinithink_02_clinithink_02.csv'
 );
-
 #### global options ####
 #' There is no need to repeat these options in `local.config.R` unless for some
 #' reason you only need to override them locally. Otherwise, these options
