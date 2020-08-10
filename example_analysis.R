@@ -57,6 +57,11 @@ attr(dat04,'tblinfo')$c_nashonly <- attr(dat04,'tblinfo')$column %in%
   c('nash_prm_inc','signs_of_nash_prm_inc','hepatic_fibrosis_nash_risk_prm_inc');
 pander(paste(v(c_nashonly,dat04)));
 dat04$a_ct_nash <- dat04[,v(c_nashonly,dat04)] %>% rowSums;
+attr(dat04,'tblinfo')$c_i2b2nash <- attr(dat04,'tblinfo')$column %in%
+  c('v001_nlchlc_ptnts_tf','v003_fbrs__ptnts_tf','v004_sthpts_tf');
+#' The equivalent i2b2 determinations are based on the following ICD codes:
+pander(paste(v(c_i2b2nash)));
+dat04$a_i2b2nash <- dat04[,v(c_i2b2nash,dat04)] %>% rowSums;
 #'
 #' ***
 #'
