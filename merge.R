@@ -52,6 +52,13 @@ if(with(dat04,sum((age-age_in_years_num)<=1,na.rm = T)!=nrow(dat01))){
   warning('Mismatch between "age" from Clinithink and "age_in_years_num" from i2b2');
 }
 
+#+ pankil
+# pankil ----
+pankil$mrn <- as.character(pankil$mrn);
+#' `id2` is the order the visits appear in Pankil's version
+pankil$id2 <- seq_len(nrow(pankil));
+dat04 <- right_join(dat04,pankil);
+
 #' Sort it in the same order as the original. First rows.
 dat04 <- rbind(dat04[match(dat01$mrn,dat04$mrn),],subset(dat04,is.na(surname)));
 #' Then, columns.
