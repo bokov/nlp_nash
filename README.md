@@ -11,5 +11,4 @@ Pankil or Alex
 
 We are grateful to you for [bug reports and any other feedback you may have to offer](https://github.com/bokov/nlp_nash/issues).
 
-[![Travis-CI Build Status](https://travis-ci.org/bokov/nlp_nash.svg?branch=master)](https://travis-ci.org/bokov/nlp_nash)
 
