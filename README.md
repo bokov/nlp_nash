@@ -29,7 +29,7 @@ of the files `performance.rds` (md5: dafa6eb2f2e1a4df4c86e537310e24a6) and
    `rmarkdown::render('clinithink_manuscript_draft.Rmd',output_format='bookdown::html_document2',  encoding = 'UTF-8')`
    
 
-Here is a summary of some of the files in this repo:
+## Summary of some of the files in this repo:
 
 *`clinithink_manuscxript_draft.Rmd`*: The main document, which can be used to
 generate the manuscript in HTML or Word format.
