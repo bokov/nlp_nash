@@ -1,0 +1,249 @@
+---
+title: A comparison of Natural Language Processing, ICD10 codes, and manual chart
+  abstraction for identifying patients with NASH in an EHR system.
+author: "Pankil Shah, Alex Bokov, Dimpy Shah, ..."
+abstract: |
+  We present the comparative performance analysis of the NLP based
+  CliniThink classifier in identifying patients with NASH (Non-Alcoholic
+  SteatoHepatitis) as compared to manual chart abstraction and ICD10 based
+  query. These methods represent three different approaches to patient
+  cohort identification from electronic medical records. We identified the
+  study population from a convenience sample of bariatric clinic patients.
+  Study protocol and methods can be found here.
+  In identifying NASH cases, the CliniThink classifier performed
+  comparably to the manual chart review. CliniThink had similar
+  sensitivity levels and marginally lower specificity. Yoden's Index
+  (expressed here on a 0 to 100 scale) was also similar; however, chart
+  review had overall higher accuracy. Upon inspection of divergent cases,
+  we observed that CliniThink NLP excelled at phrases matching, but fell
+  short because its query did not account for corroborative clinical
+  criteria (e.g. fib4 score, MetSyn, elevated LFTs). The CliniThink query
+  took only a few minutes during the demo and had substatial time saving
+  benefits over chart review.
+  Both CliniThink and manual chart review performed better than ICD10
+  based query. This finding could be attributed to a lack of specific
+  coding for NASH in ICD10 and inadequate coding practice as NASH was not
+  always the principal diagnosis. None of the differences were
+  statistically significant.
+  The analysis was expanded to include expanded diagnostic criteria for
+  NASH (clinical NASH) as well as probable classification. We observed a
+  similar trend in the results.
+output:
+  bookdown::word_document2:
+    reference_docx: template.docx
+    fig_caption: yes
+    self_contained: yes
+    number_sections: no
+  word_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    theme: paper
+    highlight: zenburn
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    df_print: paged
+  bookdown::html_document2:
+    fig_caption: yes
+    self_contained: yes
+    number_sections: no
+    keep_md: yes
+    clean: no
+documentclass: article
+bibliography: nlp_nash.bib
+csl: harvard-cite-them-right.csl
+css: production.css
+editor_options:
+  chunk_output_type: console
+---
+```{r load_deps, echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+source('.boilerplate.R',local = TRUE);
+.currentscript <- current_scriptname('clinithink_manuscript_draft.Rmd');
+dt.performance = data.table(readRDS(inputdata['performance']));
+dt.merge = readRDS(inputdata['merge']);
+
+```
+
+# Introduction
+
+Nonalcoholic fatty liver disease (NAFLD) is a condition in which excess
+fat is stored in the liver but not caused by heavy alcohol use. About
+20% of NAFLD cases progress to nonalcoholic steatohepatitis (NASH)
+characterized by inflammation of the liver and liver cell damage, in
+addition to fat deposits in the liver. This in turn can cause fibrosis,
+or scarring, of the liver. NASH is definitively diagnosed by biopsy or
+fibroscan. In the absence of such results NASH is suspected if the
+clinical diagnosis of NAFLD is accompanied by elevated liver enzymes,
+CT/USG imaging reports mentioning fibrosis, and cluster of related
+conditions such as diabetes (DM), hypertension, MetSyn.
+
+::: {.note2self custom-style="bnote2self"}
+
+-   NASH is a good case study
+    -   No ICD9
+    -   Biopsy confirmatory -- cost, peads
+    -   Treatment
+    -   Need for Clinical Trials
+-   Search Strategy: for search in case of say DM vs NASH
+-   Some background on each of the 4 approaches
+    -   Time
+    -   Effort
+    -   Funding / pilot
+-   Discussion:
+    -   Address Bias
+:::
+
+# Materials and Methods
+
+## Patient Cohort
+
+A sample of 286 patients seen at the MARC Bariatric Surgery Clinic from
+January 1 2019 through `r fs('???')` was randomly selected.
+
+## Chart Review
+
+We used a combination of a resident, medical student/s and graduate
+student/s to conduct chart review of sequential cases at the Bariatric
+Surgery Clinic to identify NASH / hepatic fibrosis cases. For each
+patient, each of the reviewers read the `r fs('X, Y, and Z')` panels in the
+Epic Hyperspace EHR system. IRR was required to be greater than 0.95 to
+maintain consistent standard of evaluation. Reviewers that did not meet
+this threshold were trained or replaced.
+
+### Expert Chart Review (Gold Standard)
+
+Any patient who was screened as a case of NASH / hepatic fibrosis by at
+least one of the screening methods was included in the expert review.
+Additionally, a random sequential sample of 10% of all cases were
+included in the expert review to address verification bias. The
+diagnosis status of the patients not identified as cases by any of the
+screening methods and also not included in the 10% random sequential
+expert review were imputed based on lab results, billing and treatment
+variables for FibroTest, hepatitis B/C, alcoholic liver disease,
+cirrhosis, etc. using random forest or other statistical methods.
+
+### 
+
+### Clinithink NLP
+
+
+`r fs('describe Clinithink method')`
+
+### ICD10 Codes
+
+Patients with any ICD10 code in K75.81, XX, or YY were judged positive
+for NASH or hepatic fibrosis.
+
+# Results
+
+For each of the three screening methods only the definitive verdicts are
+shown. For the ICD10 screen there were no probable verdicts.
+
+## Chart Review
+```{r chart_review}
+m.1  = table(dt.merge[,.(chart_definite,verify_definite)]);
+m.1 = apply(apply(m.1, 1, rev), 1, rev);
+rval <- epi.tests(m.1, conf.level = 0.95);
+
+pander(rval$tab,col.names=c('NASH +','NASH -','Total')
+       ,row.names=c('Chart Review +','Chart Review -','Total'));
+
+print.episumm(summary(rval)) %>% pander(col.names=c('','Estimate','CI'));
+
+```
+### Inter-rater reliability
+
+### Personnel-hours 
+
+## Diagnosis Codes
+
+```{r diagnosis_codes}
+m.1  = table(dt.merge[,.(i2b2_definite,verify_definite)]);
+m.1 = apply(apply(m.1, 1, rev), 1, rev);
+rval <- epi.tests(m.1, conf.level = 0.95);
+
+pander(rval$tab,col.names=c('NASH +','NASH -','Total')
+       ,row.names=c('Diagnosis Codes +','Diagnosis Codes -','Total'));
+
+print.episumm(summary(rval)) %>% pander(col.names=c('','Estimate','CI'));
+```
+## Clinithink NLP
+
+```{r clinithink_nlp}
+m.1  = table(dt.merge[,.(clinithink_definite,verify_definite)]);
+m.1 = apply(apply(m.1, 1, rev), 1, rev);
+rval <- epi.tests(m.1, conf.level = 0.95);
+
+pander(rval$tab,col.names=c('NASH +','NASH -','Total')
+       ,row.names=c('Diagnosis Codes +','Diagnosis Codes -','Total'));
+
+print.episumm(summary(rval)) %>% pander(col.names=c('','Estimate','CI'));
+```
+
+
+## Agreement and disagreement between screening methods
+
+```{r upset_matrix}
+upset(dt.merge[,.(i2b2_definite,chart_definite,clinithink_definite,verify_definite)]);
+```
+
+An UpSet diagram showing which patients were identified by which
+combination of screening methods. `r fs('Note that the largest single group
+currently are 14 patients identified by ICD10 codes only. Note also that
+there are 5 patients identified by all three screening methods and
+verified. There are also 3 patients identified by all three methods but
+not verified.')`
+
+## Overall performance
+
+```{r overall_performance, fig.height= 15, fig.width= 15}
+dt.performance = data.table(readRDS(inputdata['performance']))
+
+dt.1 = dt.performance[measure != "Diagnostic OR",]
+
+p = 
+    ggplot(dt.performance, 
+           aes(x = classifier, 
+               y = round(est,digits = 0), 
+               ymin = round(lower,0), 
+               ymax = round(upper,0), 
+               colour = classifier
+               ) 
+           ) +
+    geom_pointrange(size=1.4) + 
+    coord_flip() + 
+    xlab("classifier") + ylab("estimate in percentage with 95% CI") +
+    theme_bw(base_size = 20)
+
+p + facet_grid(cols = vars(measure), rows = vars(outcome, criterion), scales = "free")
+
+```
+
+# Discussion
+Recently, @vanvleck19 published results from using this algorithm to identify 
+NALD leaving open the question of `r fs('...')` which we address by 
+`r fs('...')` .
+
+Our results are broadly in agreement with theirs but in addition `r fs('...')`
+
+::: {.note2self custom-style="bnote2self"}
+We need to find a way to distinguish ourselves from Van Vleck et al.
+2019, because if this is all we report it's basically a clone of their
+paper but with a smaller sample size. Possible points to develop
+further:
+
+1.  Staff effort
+2.  Inter-rater reliability
+3.  What makes it easy for abstractors to overlook patients that are
+    specifically coded for NASH (or, why are patients coded for NASH
+    erroneously)
+4.  Technically, Van Velck et al. focus on NALD and we focus on NASH, so
+    this could be framed as the next logical step building on their work
+    instead of them simply scooping us
+:::
+
+# Conclusions
+
+# References
+
