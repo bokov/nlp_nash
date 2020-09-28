@@ -1,7 +1,7 @@
 language: r
 pandoc_version: 2.3
 script: 
-  - Rscript --no-save --verbose --no-save ci_test.R
+  - Rscript --no-save --verbose --no-save .ci_test.R
 cache: 
   packages: true
   directories:
