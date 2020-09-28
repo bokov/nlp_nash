@@ -5,7 +5,7 @@
 ## Installation:
 
 If you are part of the paper-writing team, you should separately receive a copy
-# of the files `performance.rds` (md5: dafa6eb2f2e1a4df4c86e537310e24a6) and 
+of the files `performance.rds` (md5: dafa6eb2f2e1a4df4c86e537310e24a6) and 
 `merge.rds` (md5: 6c33457119ff440019fc1ac396c5cd48).
 
 1. Clone this repository using 
