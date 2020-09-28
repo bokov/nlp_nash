@@ -8,19 +8,25 @@ If you are part of the paper-writing team, you should separately receive a copy
 # of the files `performance.rds` (md5: dafa6eb2f2e1a4df4c86e537310e24a6) and 
 `merge.rds` (md5: 6c33457119ff440019fc1ac396c5cd48).
 
-1. Clone this repository and either copy `performance.rds` and `merge.rds` into
-   the same directory or (preferred) create a file called `local.config.R` and in
-   it put the following:
-```{r}
-inputdata <- c(performance='PATH/TO/performance.rds',merge='PATH/TO/merge.rds');
-```
+1. Clone this repository using 
+   `git clone --recurse-submodules https://github.com/bokov/nlp_nash`
+   Make sure you include the `--recurse-submodules` option.
+   
+2. Either copy `performance.rds` and `merge.rds` into the project directory or 
+   (preferred) create a file called `local.config.R` in the project directory 
+   and into that file put the following: 
+   ` inputdata <- c(performance='PATH/TO/performance.rds',merge='PATH/TO/merge.rds')`
    ...where `PATH/TO` is replaced by the actual path where R should look for the 
-   data.
+   data. __DO NOT CHECK THE RDS FILES INTO GITHUB, YOU ARE RESPONSIBLE FOR
+   MAINTAINING A STRICT SEPARATION BETWEEN DATA AND CODE__
 
-2. Open the file `clinithink_manuscript_draft.Rmd` in  RStudio and 
+3. Open the file `clinithink_manuscript_draft.Rmd` in  RStudio and 
    hit CTRL-SHIFT-K. The first time you do this, the scripts will install any
    needed R libraries that you are missing. This may take a long time but 
    afterward they will not need to do this.
+   
+   Alternatively, you can render the drafts from the console by typing:
+   `rmarkdown::render('clinithink_manuscript_draft.Rmd',output_format='bookdown::html_document2',  encoding = 'UTF-8')`
    
 
 Here is a summary of some of the files in this repo:
