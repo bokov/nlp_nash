@@ -2,8 +2,12 @@
 .Rhistory
 .Rapp.history
 # Session Data files
-.RData
-.rdata
+*.RData
+*.rdata
+*.rds
+*.Rds
+*.RDS
+*.RDs
 # Example code in package build process
 *-Ex.R
 # Output files from R CMD build
