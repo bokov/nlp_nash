@@ -29,11 +29,12 @@ abstract: |
   NASH (clinical NASH) as well as probable classification. We observed a
   similar trend in the results.
 output:
-  bookdown::word_document2:
-    reference_docx: template.docx
+  bookdown::html_document2:
     fig_caption: yes
     self_contained: yes
     number_sections: no
+    keep_md: yes
+    clean: no
   word_document:
     toc: yes
     toc_depth: '2'
@@ -44,12 +45,11 @@ output:
     toc_depth: 2
     toc_float: yes
     df_print: paged
-  bookdown::html_document2:
+  bookdown::word_document2:
+    reference_docx: template.docx
     fig_caption: yes
     self_contained: yes
     number_sections: no
-    keep_md: yes
-    clean: no
 documentclass: article
 bibliography: nlp_nash.bib
 csl: harvard-cite-them-right.csl
